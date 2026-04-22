@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TrustSpace — Nigeria's most trusted business review platform. Read and write honest reviews from real Nigerians.">
+  <meta name="keywords" content="Nigeria business reviews, Nigerian consumer reviews, trustworthy reviews Nigeria">
+  <meta property="og:title" content="TrustSpace — Nigeria's Most Trusted Review Platform">
+  <meta property="og:description" content="Find honest reviews on Nigerian businesses. Join 2.4 million Nigerian consumers.">
+  <meta property="og:type" content="website">
+  <title>TrustSpace — Nigeria's Most Trusted Review Platform</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>★</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <a class="logo" onclick="goPage('home')">
+    <span class="logo-star">★</span>Trust<span style="color:var(--green)">Space</span>
+  </a>
+  <div class="nav-center">
+    <div class="nav-search-wrap">
+      <input type="text" id="nav-search" placeholder="Search businesses…" onkeydown="if(event.key==='Enter')doSearch(this.value)">
+      <button onclick="doSearch(document.getElementById('nav-search').value)">Search</button>
+    </div>
+  </div>
+  <div class="nav-actions" id="nav-actions">
+    <button class="btn btn-ghost" onclick="openAuth('login')">Sign In</button>
+    <button class="btn btn-primary" onclick="openAuth('signup')">Sign Up Free</button>
+  </div>
+</nav>
+
+<!-- ===== AUTH MODAL ===== -->
+<div class="modal-overlay" id="auth-overlay" onclick="if(event.target===this)closeAuth()">
+  <div class="modal" id="auth-modal"><!-- rendered by JS --></div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"><span class="toast-icon">✓</span> <span></span></div>
+
+<!-- ========================================
+     HOME PAGE
+======================================== -->
+<div class="page active" id="home">
+
+  <!-- HERO (WHITE) -->
+  <div class="hero">
+    <div class="hero-eyebrow">🇳🇬 Nigeria's #1 Review Platform</div>
+    <h1>Trust begins with<br><span class="green">honest reviews</span></h1>
+    <p class="hero-sub">Real reviews from real Nigerians on the businesses, brands and services that matter to you.</p>
+    <div class="hero-search-box">
+      <input type="text" id="hero-search" placeholder="Search for a business, brand or service…">
+      <select id="hero-cat">
+        <option>All Categories</option>
+        <option>Banking & Finance</option>
+        <option>E-commerce</option>
+        <option>Telecoms</option>
+        <option>Logistics</option>
+        <option>Food & Drinks</option>
+        <option>Health</option>
+        <option>Education</option>
+        <option>Real Estate</option>
+        <option>Travel</option>
+      </select>
+      <button onclick="doSearch(document.getElementById('hero-search').value)">Search →</button>
+    </div>
+    <div class="hero-trending">
+      <span class="trending-label">Trending:</span>
+      <span class="trending-chip" onclick="openBiz(0)">Paystack</span>
+      <span class="trending-chip" onclick="openBiz(1)">Jumia</span>
+      <span class="trending-chip" onclick="openBiz(2)">GTBank</span>
+      <span class="trending-chip" onclick="openBiz(8)">Opay</span>
+      <span class="trending-chip" onclick="openBiz(6)">MTN</span>
+      <span class="trending-chip" onclick="openBiz(5)">Chowdeck</span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">2.4M+</div><div class="lbl">Reviews</div></div>
+      <div class="hero-stat"><div class="num">180K+</div><div class="lbl">Businesses</div></div>
+      <div class="hero-stat"><div class="num">36</div><div class="lbl">States Covered</div></div>
+      <div class="hero-stat"><div class="num">4.1★</div><div class="lbl">Platform Score</div></div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="cats-bar">
+    <div class="cats-bar-inner">
+      <h3>Browse by Category</h3>
+      <div class="cat-grid" id="cat-grid-home"></div>
+    </div>
+  </div>
+
+  <!-- TOP BUSINESSES -->
+  <div style="background:var(--bg3);padding:48px 0;" id="biz-section">
+    <div class="container">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div class="section-title">Top Rated in Nigeria 🇳🇬</div>
+          <div class="section-sub">Based on verified reviews from real Nigerian consumers</div>
+        </div>
+        <button class="btn btn-ghost" onclick="goPage('categories')">View all categories →</button>
+      </div>
+      <div class="filter-bar" id="biz-filter-bar">
+        <button class="filter-btn active" onclick="filterBiz(this,'all')">All</button>
+        <button class="filter-btn" onclick="filterBiz(this,'finance')">Fintech</button>
+        <button class="filter-btn" onclick="filterBiz(this,'ecommerce')">E-commerce</button>
+        <button class="filter-btn" onclick="filterBiz(this,'logistics')">Logistics</button>
+        <button class="filter-btn" onclick="filterBiz(this,'food')">Food</button>
+        <button class="filter-btn" onclick="filterBiz(this,'telecom')">Telecom</button>
+        <button class="filter-btn" onclick="filterBiz(this,'travel')">Travel</button>
+        <select class="filter-select" onchange="sortBiz(this.value)">
+          <option>Top Rated</option>
+          <option>Most Reviewed</option>
+          <option>Newest</option>
+        </select>
+      </div>
+      <div class="biz-grid" id="biz-grid"></div>
+    </div>
+  </div>
+
+  <!-- CTA BANNER -->
+  <div class="cta-banner">
+    <h2>Had an experience?<br>Nigeria deserves to know.</h2>
+    <p>Your honest review helps fellow Nigerians make smarter decisions every day.</p>
+    <button class="btn btn-primary" style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;padding:14px 36px;" onclick="goWriteReview(null)">Write a Free Review →</button>
+  </div>
+
+  <!-- RECENT REVIEWS -->
+  <div class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title">What Nigerians Are Saying</div>
+        <div class="section-sub">Real reviews, published in real-time from across the country</div>
+      </div>
+      <div class="review-list" id="recent-reviews"></div>
+    </div>
+  </div>
+
+  <!-- WHY TRUSTSPACE -->
+  <div style="background:var(--bg2);padding:56px 0;">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:36px;">
+        <div class="section-title">Why Nigerians trust TrustSpace</div>
+        <div class="section-sub">Built specifically for the Nigerian market</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px;">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;">
+          <div style="font-size:32px;margin-bottom:12px;">🛡️</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px;">Verified Reviews Only</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.6;">AI-powered + human moderation ensures every review is from a real Nigerian customer.</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;">
+          <div style="font-size:32px;margin-bottom:12px;">🇳🇬</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px;">Built for Nigeria</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.6;">Covers all 36 states, prices in Naira, and deeply understands the Nigerian consumer experience.</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;">
+          <div style="font-size:32px;margin-bottom:12px;">⚖️</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px;">FCCPC Compliant</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.6;">Fully compliant with the Federal Competition & Consumer Protection Commission guidelines.</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;">
+          <div style="font-size:32px;margin-bottom:12px;">🔒</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px;">NDPR Compliant</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.6;">Your data is protected under Nigeria Data Protection Regulations. No data sold to third parties.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">★ Trust<span>Space</span></div>
+        <div class="footer-desc">Nigeria's home for honest reviews. Helping Nigerians make smarter decisions since 2024. Built in Lagos 🇳🇬.</div>
+      </div>
+      <div class="footer-col">
+        <h4>For Consumers</h4>
+        <a onclick="goWriteReview(null)">Write a Review</a>
+        <a onclick="goPage('categories')">Browse Categories</a>
+        <a onclick="showToast('Coming soon!','🔔')">Review Guidelines</a>
+        <a onclick="showToast('Coming soon!','🔔')">Report a Business</a>
+      </div>
+      <div class="footer-col">
+        <h4>For Businesses</h4>
+        <a onclick="goPage('for-business')">Business Solutions</a>
+        <a onclick="openAuth('signup')">Claim Your Profile</a>
+        <a onclick="showToast('Coming soon!','🔔')">Advertise</a>
+        <a onclick="showToast('Coming soon!','🔔')">API Access</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a onclick="showToast('Coming soon!','🔔')">About TrustSpace</a>
+        <a onclick="showToast('Coming soon!','🔔')">Press</a>
+        <a onclick="showToast('Coming soon!','🔔')">Careers</a>
+        <a onclick="showToast('Coming soon!','🔔')">Contact Us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a onclick="showToast('Coming soon!','🔔')">Privacy Policy</a>
+        <a onclick="showToast('Coming soon!','🔔')">Terms of Use</a>
+        <a onclick="showToast('Coming soon!','🔔')">Cookie Policy</a>
+        <a onclick="showToast('Coming soon!','🔔')">NDPR Compliance</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2025 TrustSpace Limited · RC 1234567 · Lagos, Nigeria 🇳🇬</div>
+      <div>NDPR Compliant · FCCPC Registered · CBN Guidelines Observed</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ========================================
+     BUSINESS PROFILE PAGE
+======================================== -->
+<div class="page" id="profile-page">
+  <div id="profile-content"><!-- rendered by JS --></div>
+</div>
+
+<!-- ========================================
+     WRITE REVIEW PAGE
+======================================== -->
+<div class="page" id="write-review">
+  <div id="write-review-content">
+    <div class="write-review-wrap">
+      <button class="btn btn-ghost" style="margin-bottom:24px;" onclick="goPage('home')">← Back</button>
+      <div class="page-title">Write a Review</div>
+      <div class="page-sub">Share your honest experience with fellow Nigerians 🇳🇬</div>
+      <div class="info-box">
+        💡 TrustSpace uses AI + human moderation to ensure reviews are genuine. All reviews are published within 24 hours if they meet our guidelines.
+      </div>
+      <div id="wr-biz-display"></div>
+      <div class="form-section">
+        <label class="form-label">Business Name <span class="req">*</span></label>
+        <input class="form-input" type="text" id="wr-biz-name" placeholder="e.g. Paystack, Konga, GTBank…">
+      </div>
+      <div class="form-section">
+        <label class="form-label">Overall Rating <span class="req">*</span></label>
+        <div class="star-picker">
+          <span class="star-pick" data-v="1" onclick="setStars(1)">★</span>
+          <span class="star-pick" data-v="2" onclick="setStars(2)">★</span>
+          <span class="star-pick" data-v="3" onclick="setStars(3)">★</span>
+          <span class="star-pick" data-v="4" onclick="setStars(4)">★</span>
+          <span class="star-pick" data-v="5" onclick="setStars(5)">★</span>
+        </div>
+        <div class="star-rating-label" id="star-rating-label">Click to rate</div>
+      </div>
+      <div class="form-section">
+        <label class="form-label">Review Title <span class="req">*</span></label>
+        <input class="form-input" type="text" id="wr-title" placeholder="Summarise your experience in one sentence…">
+      </div>
+      <div class="form-section">
+        <label class="form-label">Your Review <span class="req">*</span></label>
+        <textarea class="form-textarea" id="wr-body" placeholder="Tell others what you experienced — be specific, honest and helpful. Mention what was great or what could be improved. Minimum 50 characters." oninput="updateCharCount(this)"></textarea>
+        <div class="char-count" id="char-count">0 characters</div>
+      </div>
+      <div class="form-row">
+        <div class="form-section">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="wr-cat">
+            <option>Banking & Fintech</option>
+            <option>E-commerce & Shopping</option>
+            <option>Logistics & Delivery</option>
+            <option>Telecommunications</option>
+            <option>Food & Restaurant</option>
+            <option>Health & Pharmacy</option>
+            <option>Education & Training</option>
+            <option>Real Estate</option>
+            <option>Travel & Transport</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-section">
+          <label class="form-label">State</label>
+          <select class="form-select" id="wr-state">
+            <option>Lagos</option><option>Abuja (FCT)</option><option>Rivers</option>
+            <option>Kano</option><option>Oyo</option><option>Anambra</option>
+            <option>Delta</option><option>Enugu</option><option>Kaduna</option>
+            <option>Ondo</option><option>Ogun</option><option>Imo</option>
+            <option>Borno</option><option>Cross River</option><option>Akwa Ibom</option>
+            <option>Bayelsa</option><option>Edo</option><option>Ekiti</option>
+            <option>Gombe</option><option>Jigawa</option><option>Kebbi</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-section">
+        <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;">
+          <input type="checkbox" id="wr-verified">
+          I confirm this review is based on my genuine experience
+        </label>
+      </div>
+      <button class="submit-btn" onclick="submitReview()">Submit Review →</button>
+      <p style="font-size:12px;color:var(--text3);text-align:center;margin-top:14px;">
+        By submitting you agree to our <a href="#" style="color:var(--green)" onclick="return false">Review Guidelines</a> and <a href="#" style="color:var(--green)" onclick="return false">Terms of Use</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     CATEGORIES PAGE
+======================================== -->
+<div class="page" id="categories">
+  <div style="background:var(--accent);padding:48px 24px 36px;">
+    <div class="container">
+      <button class="btn btn-ghost" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);margin-bottom:20px;" onclick="goPage('home')">← Back</button>
+      <h1 style="font-family:'Syne',sans-serif;font-weight:800;font-size:38px;color:#fff;margin-bottom:8px;">All Categories</h1>
+      <p style="color:rgba(255,255,255,0.6)">Browse businesses across all Nigerian sectors — 180,000+ businesses listed</p>
+    </div>
+  </div>
+  <div class="section">
+    <div class="container">
+      <div class="cat-grid" id="cats-full"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     FOR BUSINESS PAGE
+======================================== -->
+<div class="page" id="for-business">
+  <div class="biz-hero">
+    <button class="btn btn-ghost" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);margin-bottom:32px;position:relative;" onclick="goPage('home')">← Back to Home</button>
+    <h1>Grow Your Business<br>With <span class="green">TrustSpace</span></h1>
+    <p>Nigeria's most trusted review platform. Claim your profile and start building consumer trust today.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;">
+      <button class="btn btn-primary" style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;padding:14px 32px;" onclick="openAuth('signup')">Claim Your Free Profile →</button>
+      <button class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,0.4);font-size:15px;padding:14px 24px;" onclick="showToast('Demo call coming soon!','📞')">Book a Demo</button>
+    </div>
+  </div>
+
+  <!-- SOCIAL PROOF -->
+  <div style="padding:32px 24px;border-bottom:1px solid var(--border);">
+    <div class="container" style="display:flex;gap:0;justify-content:center;flex-wrap:wrap;">
+      <div style="text-align:center;padding:0 32px;border-right:1px solid var(--border);">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--green)">180K+</div>
+        <div style="font-size:13px;color:var(--text3)">Businesses Listed</div>
+      </div>
+      <div style="text-align:center;padding:0 32px;border-right:1px solid var(--border);">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--green)">2.4M+</div>
+        <div style="font-size:13px;color:var(--text3)">Consumer Reviews</div>
+      </div>
+      <div style="text-align:center;padding:0 32px;border-right:1px solid var(--border);">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--green)">8M+</div>
+        <div style="font-size:13px;color:var(--text3)">Monthly Visitors</div>
+      </div>
+      <div style="text-align:center;padding:0 32px;">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--green)">36</div>
+        <div style="font-size:13px;color:var(--text3)">States Covered</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="section">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:36px;">
+        <div class="section-title">Everything you need to build trust</div>
+        <div class="section-sub">The complete Nigerian business reputation toolkit</div>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">Review Analytics</div><div class="feature-desc">Track rating trends, review volume, and sentiment over time. Understand your customers deeply.</div></div>
+        <div class="feature-card"><div class="feature-icon">🛡️</div><div class="feature-title">Verified Business Badge</div><div class="feature-desc">Build instant consumer trust with our official verification badge displayed on your profile.</div></div>
+        <div class="feature-card"><div class="feature-icon">💬</div><div class="feature-title">Reply to Reviews</div><div class="feature-desc">Engage publicly with customers. Show you care about feedback — good and bad.</div></div>
+        <div class="feature-card"><div class="feature-icon">📧</div><div class="feature-title">Review Invitations</div><div class="feature-desc">Automatically invite customers to review via email and SMS after every transaction.</div></div>
+        <div class="feature-card"><div class="feature-icon">🔧</div><div class="feature-title">Review Widget</div><div class="feature-desc">Embed your live TrustSpace rating on your website to convert more visitors into customers.</div></div>
+        <div class="feature-card"><div class="feature-icon">📢</div><div class="feature-title">Promoted Listings</div><div class="feature-desc">Get seen first by millions of Nigerians searching for businesses like yours.</div></div>
+        <div class="feature-card"><div class="feature-icon">📱</div><div class="feature-title">Mobile Dashboard</div><div class="feature-desc">Manage your reputation on the go. Full-featured mobile dashboard for busy Nigerian entrepreneurs.</div></div>
+        <div class="feature-card"><div class="feature-icon">🔗</div><div class="feature-title">API Integration</div><div class="feature-desc">Integrate TrustSpace reviews directly into your website, app or CRM system.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div style="background:var(--bg2);padding:56px 0;">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:36px;">
+        <div class="section-title">Simple, transparent pricing</div>
+        <div class="section-sub">Start free. Upgrade as you grow. Priced for Nigeria.</div>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-plan">Starter</div>
+          <div class="price-amount">₦0</div>
+          <div class="price-period">Free forever</div>
+          <ul class="price-features">
+            <li>Claim your business profile</li>
+            <li>Receive reviews</li>
+            <li>Basic rating display</li>
+            <li>Public profile page</li>
+          </ul>
+          <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openAuth('signup')">Get Started Free</button>
+        </div>
+        <div class="price-card popular">
+          <div class="popular-badge">★ Most Popular</div>
+          <div class="price-plan">Pro</div>
+          <div class="price-amount">₦15,000</div>
+          <div class="price-period">per month, billed monthly</div>
+          <ul class="price-features">
+            <li>Everything in Starter</li>
+            <li>Reply to reviews</li>
+            <li>Review invitation emails</li>
+            <li>Analytics dashboard</li>
+            <li>Website review widget</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openAuth('signup')">Start Pro Trial</button>
+        </div>
+        <div class="price-card">
+          <div class="price-plan">Enterprise</div>
+          <div class="price-amount">Custom</div>
+          <div class="price-period">contact us for pricing</div>
+          <ul class="price-features">
+            <li>Everything in Pro</li>
+            <li>API access</li>
+            <li>Dedicated account manager</li>
+            <li>Custom integrations</li>
+            <li>Multi-location management</li>
+            <li>SLA guarantee</li>
+          </ul>
+          <button class="btn btn-dark" style="width:100%;justify-content:center;" onclick="showToast('Our team will be in touch!','📞')">Contact Sales</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section">
+    <div class="container" style="max-width:700px;">
+      <div style="text-align:center;margin-bottom:32px;"><div class="section-title">Frequently Asked Questions</div></div>
+      <div id="faq-list"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">★ Trust<span>Space</span></div>
+        <div class="footer-desc">Nigeria's home for honest reviews. Built in Lagos 🇳🇬.</div>
+      </div>
+      <div class="footer-col"><h4>Product</h4><a onclick="goPage('home')">Home</a><a onclick="goPage('categories')">Categories</a><a onclick="goPage('for-business')">For Business</a></div>
+      <div class="footer-col"><h4>Legal</h4><a>Privacy Policy</a><a>Terms of Use</a><a>NDPR Compliance</a></div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2025 TrustSpace Limited · RC 1234567 · Lagos, Nigeria 🇳🇬</div>
+      <div>NDPR · FCCPC · CBN Compliant</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ========================================
+     USER PROFILE PAGE
+======================================== -->
+<div class="page" id="user-profile">
+  <div style="background:var(--accent);padding:32px 24px 24px;">
+    <div class="container">
+      <button class="btn btn-ghost" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);margin-bottom:16px;" onclick="goPage('home')">← Back</button>
+    </div>
+  </div>
+  <div id="user-profile-content"></div>
+</div>
+
+<!-- ========================================
+     BUSINESS DASHBOARD
+======================================== -->
+<div class="page" id="biz-dashboard">
+  <div class="dashboard-wrap">
+    <div class="sidebar">
+      <div style="padding:20px 20px 16px;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#fff;">★ <span style="color:var(--green)">Trust</span>Space</div>
+      <div style="padding:0 12px;margin-bottom:4px;font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;">Dashboard</div>
+      <div class="sidebar-item active" onclick="switchDashPanel(this,'overview')"><span class="sidebar-icon">📊</span> Overview</div>
+      <div class="sidebar-item" onclick="switchDashPanel(this,'reviews')"><span class="sidebar-icon">⭐</span> Reviews</div>
+      <div class="sidebar-item" onclick="switchDashPanel(this,'analytics')"><span class="sidebar-icon">📈</span> Analytics</div>
+      <div style="height:1px;background:rgba(255,255,255,0.08);margin:12px 16px;"></div>
+      <div style="padding:0 12px;margin-bottom:4px;font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;">Business</div>
+      <div class="sidebar-item" onclick="switchDashPanel(this,'profile')"><span class="sidebar-icon">🏢</span> Business Profile</div>
+      <div class="sidebar-item" onclick="switchDashPanel(this,'settings')"><span class="sidebar-icon">⚙️</span> Settings</div>
+      <div style="height:1px;background:rgba(255,255,255,0.08);margin:12px 16px;"></div>
+      <div class="sidebar-item" onclick="goPage('home')"><span class="sidebar-icon">🏠</span> Back to Site</div>
+      <div class="sidebar-item" onclick="logout()"><span class="sidebar-icon">🚪</span> Sign Out</div>
+    </div>
+    <div id="biz-dash-content"><!-- rendered by JS --></div>
+  </div>
+</div>
+
+<!-- ========================================
+     SETTINGS PAGE
+======================================== -->
+<div class="page" id="settings">
+  <div style="background:var(--accent);padding:32px 24px 24px;">
+    <div class="container">
+      <button class="btn btn-ghost" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);margin-bottom:16px;" onclick="history.back()">← Back</button>
+    </div>
+  </div>
+  <div id="settings-content"></div>
+</div>
+
+<script>
+// FAQ Data
+const FAQS = [
+  { q: 'How do I claim my business profile?', a: 'Sign up for a free TrustSpace business account. Once registered, search for your business and click "Claim this profile". You\'ll need to verify ownership via email or business registration documents.' },
+  { q: 'Are TrustSpace reviews verified?', a: 'Yes. All reviews go through our AI-powered verification system and human moderation team. We cross-check reviewer accounts, flag suspicious patterns, and remove fake reviews within 24 hours.' },
+  { q: 'Can I respond to reviews?', a: 'Business responses are available on the Pro and Enterprise plans. Responding to reviews is one of the most effective ways to build consumer trust.' },
+  { q: 'How does TrustSpace comply with Nigerian law?', a: 'TrustSpace operates in full compliance with the Nigeria Data Protection Regulation (NDPR), Federal Competition and Consumer Protection Commission (FCCPC) guidelines, and Central Bank of Nigeria regulations where applicable.' },
+  { q: 'Can I remove a negative review?', a: 'We cannot remove reviews simply because they are negative. If a review violates our guidelines — e.g. it contains false statements or hate speech — you can flag it for investigation. We take all reports seriously.' },
+];
+
+const faqEl = document.getElementById('faq-list');
+if (faqEl) {
+  faqEl.innerHTML = FAQS.map((f,i)=>`
+    <div style="border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden;">
+      <div style="padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:15px;" onclick="toggleFaq(this,${i})">
+        ${f.q}<span id="faq-icon-${i}" style="font-size:18px;color:var(--text3);transition:transform 0.2s;">+</span>
+      </div>
+      <div id="faq-body-${i}" style="display:none;padding:0 20px 16px;font-size:14px;color:var(--text2);line-height:1.7;">${f.a}</div>
+    </div>
+  `).join('');
+}
+
+function toggleFaq(el, i) {
+  const body = document.getElementById(`faq-body-${i}`);
+  const icon = document.getElementById(`faq-icon-${i}`);
+  const open = body.style.display!=='none';
+  body.style.display = open ? 'none' : 'block';
+  icon.textContent = open ? '+' : '−';
+  icon.style.color = open ? 'var(--text3)' : 'var(--green)';
+}
+window.toggleFaq = toggleFaq;
+
+function updateCharCount(el) {
+  const cc = document.getElementById('char-count');
+  if (cc) { cc.textContent = `${el.value.length} characters`; cc.style.color = el.value.length>=50?'var(--green)':'var(--text3)'; }
+}
+window.updateCharCount = updateCharCount;
+
+function sortBiz(val) { /* already rendered */ }
+window.sortBiz = sortBiz;
+
+// Page hooks
+const origGoPage = window.goPage;
+window.goPage = function(id) {
+  if (id==='user-profile') { origGoPage(id); setTimeout(()=>renderUserProfile(),50); }
+  else if (id==='biz-dashboard') { origGoPage(id); setTimeout(()=>renderBizDashboard(),50); }
+  else if (id==='settings') { origGoPage(id); setTimeout(()=>renderSettings(),50); }
+  else origGoPage(id);
+};
+</script>
+<script src="js/app.js"></script>
+</body>
+</html>
